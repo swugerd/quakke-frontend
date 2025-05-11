@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  frontend-prod:
+    image: quakke-frontend:prod
+    container_name: frontend_prod
+    restart: unless-stopped
+    env_file:
+      - .env.prod
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend_network
+    volumes:
+      - ./public/uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend-stage:
+    image: quakke-frontend:stage
+    container_name: frontend_stage
+    restart: unless-stopped
+    env_file:
+      - .env.stage
+    ports:
+      - "3001:3000"
+    networks:
+      - frontend_network
+    volumes:
+      - ./public/uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  frontend_network:
+    driver: bridge
